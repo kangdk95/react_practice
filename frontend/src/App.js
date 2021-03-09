@@ -1,23 +1,26 @@
 import React from 'react';
-import { observer } from  'mobx-react';
-import UserStore from '/stores/UserStore';
+import { observer } from 'mobx-react';
+import UserStore from './stores/UserStore';
 import LoginForm from './LoginForm';
-import InputField from './InputField';
+// import InputField from './InputField';
 import SubmitButton from './SubmitButton';
 import './App.css';
 
 class App extends React.Component {
-
   //  define method & API
+  //  user login 여부 확인
   async componentDidMount() {
 
     try {
 
       let res = await fetch('/isLoggedIn', {
+
         method: 'post',
         headers: {
+
           'Accept': 'application/json',
-          'Content-type': 'application/json',
+          'Content-Type': 'application/json'
+
         }
       });
 
@@ -28,17 +31,20 @@ class App extends React.Component {
         UserStore.isLoggedIn = true;
         UserStore.username = result.username;
       }
-
       else {
         UserStore.loading = false;
-        UserStore.isLoggedIn = false; 
+        UserStore.isLoggedIn = false;
+
       }
     }
 
     catch (e) {
+
       UserStore.loading = false;
       UserStore.isLoggedIn = false;
+
     }
+
   }
 
   async doLogout() {
@@ -46,10 +52,13 @@ class App extends React.Component {
     try {
 
       let res = await fetch('/logout', {
+
         method: 'post',
         headers: {
+
           'Accept': 'application/json',
-          'Content-type': 'application/json',
+          'Content-Type': 'application/json'
+
         }
       });
 
@@ -59,56 +68,60 @@ class App extends React.Component {
         UserStore.isLoggedIn = false;
         UserStore.username = '';
       }
-
     }
 
     catch (e) {
+
       console.log(e)
+
     }
+
   }
 
   render() {
- 
+
     if (UserStore.loading) {
       return (
+
         <div className="app">
-          <div className="container">
-            Loading, plz wait..
-          </div>
+          <div className='container'>
+            Loading, Plz wait..
+
+           </div>
         </div>
+
+
       );
+
     }
 
-    else{
+    else {
 
-      if(UserStore.isLoggedIn){
+      if (UserStore.isLoggedIn) {
         return (
           <div className="app">
             <div className="container">
-                Welcome {UserStore.username}
+              Welcome {UserStore.username}
 
-                <SubmitButton
-                    text = {'Log out'}
-                    disabled = {false}
-                    onClick = { () => this.doLogout() }
-                />
+              <SubmitButton
+                text={'Log out'}
+                disabled={false}
+                onClick={() => this.doLogout()}
+              />
 
             </div>
           </div>
         );
       }
 
-    return (
-      <div className="app">
-        <div className = 'container'>
+      return (
+        <div className="app">
+          <div className='container'>
             <LoginForm />
+          </div> 
         </div>
-      </div>
       );
     }
   }
-
 }
-
 export default observer(App);
-  
